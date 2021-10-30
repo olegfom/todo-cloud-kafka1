@@ -59,7 +59,6 @@ public class ToDoPubSubService {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-                    	//toDoString=message;
                         //here is out message publisher in the given channel into topic "scs-099.order"
                         toDoBinder.orderOut().send(MessageBuilder.withPayload(toDoString).build());
 
