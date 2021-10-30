@@ -4,13 +4,29 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.Id;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Data
 public class ToDo {
+    @Id
 private String id;
-private String description;
-private LocalDateTime created;
-private LocalDateTime modified;
-private boolean completed;
+    @NotNull
+    @NotBlank
+    private String description;
+    //@Column(insertable = true, updatable = false)
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime created;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime modified;
+    private boolean completed;
 
     public ToDo(){
         this.id = UUID.randomUUID().toString();

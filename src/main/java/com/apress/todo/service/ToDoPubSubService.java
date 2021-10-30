@@ -14,7 +14,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.MimeTypeUtils;
 
 import com.apress.todo.cloud.ToDoBinder;
+import com.apress.todo.domain.ToDo;
+import com.apress.todo.domain.ToDoBuilder;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.stream.IntStream;
 
 @Slf4j
@@ -42,12 +48,23 @@ public class ToDoPubSubService {
                     .forEach(value -> {
                         //this is our Message payload
                         var message = String.format("ToDo TestString of %s - %s", counter, value);
-
+                    	ToDo toDo = ToDoBuilder.create().withDescription(message).build();
+                    	ObjectMapper objectMapper = new ObjectMapper();
+                    	objectMapper.findAndRegisterModules();
+                    	String toDoString = null;
+                    	try {
+							toDoString = objectMapper.writeValueAsString(toDo);
+							//log.warn("message converted: {}", toDoString);
+						} catch (JsonProcessingException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+                    	//toDoString=message;
                         //here is out message publisher in the given channel into topic "scs-099.order"
-                        toDoBinder.orderOut().send(MessageBuilder.withPayload(message).build());
+                        toDoBinder.orderOut().send(MessageBuilder.withPayload(toDoString).build());
 
                         //to show what we have produced in kafka ("WARN" to show in different color on the console)
-                        log.warn("message produced: {}", message);
+                        log.warn("message produced: {}", toDoString);
                     });
             //for logging purpose, per Scheduled run
             counter++;
